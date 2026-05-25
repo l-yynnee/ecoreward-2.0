@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./backend
+    container_name: ecoreward-backend
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_NAME=ecoreward
+    networks:
+      - backend-network
+
+  db:
+    image: mysql:8.0
+    container_name: ecoreward-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ecoreward
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - backend-network
+
+volumes:
+  db-data:
+
+networks:
+  backend-network:
+
