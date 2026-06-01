@@ -1,0 +1,298 @@
+### EcoReward API Testing - Complete Endpoint Suite
+### JWT expires after 7 days - Replace tokens as needed
+
+@baseUrl = http://localhost:4000/api/v1
+@citizenToken = 
+@collectorToken = 
+@adminToken = 
+
+###==========================
+### 1. HEALTH CHECK
+###==========================
+
+GET {{baseUrl}}/health
+
+
+###==========================
+### 2. AUTH ENDPOINTS
+###==========================
+
+### Register new citizen user
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "phone": "1234567890",
+  "password": "securepassword123"
+}
+
+### Register with phone only
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Jane Smith",
+  "phone": "+1987654321",
+  "password": "securepassword123"
+}
+
+### Register with email only
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Bob Wilson",
+  "email": "bob@example.com",
+  "password": "securepassword123"
+}
+
+### Login with email
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "securepassword123"
+}
+
+### Login with phone
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "phone": "+1987654321",
+  "password": "securepassword123"
+}
+
+
+###==========================
+### 3. USERS ENDPOINTS (Protected)
+###==========================
+
+### Get current user profile
+GET {{baseUrl}}/users/profile
+Authorization: Bearer {{citizenToken}}
+
+### Update user profile
+PUT {{baseUrl}}/users/profile
+Authorization: Bearer {{citizenToken}}
+Content-Type: application/json
+
+{
+  "name": "Updated Name",
+  "email": "newemail@example.com"
+}
+
+### Get user by ID
+GET {{baseUrl}}/users/1
+Authorization: Bearer {{citizenToken}}
+
+### List all users (Admin only)
+GET {{baseUrl}}/users
+Authorization: Bearer {{adminToken}}
+
+
+###==========================
+### 4. PICKUPS ENDPOINTS (Protected)
+###==========================
+
+### Create new pickup request
+POST {{baseUrl}}/pickups
+Authorization: Bearer {{citizenToken}}
+Content-Type: application/json
+
+{
+  "location": "123 Main St, City",
+  "latitude": 40.7128,
+  "longitude": -74.0060,
+  "items": [
+    {
+      "name": "plastic bottles",
+      "quantity": 10,
+      "unit": "pieces"
+    }
+  ],
+  "description": "Recyclable materials ready for pickup"
+}
+
+### Get all pickups for current user
+GET {{baseUrl}}/pickups
+Authorization: Bearer {{citizenToken}}
+
+### Get pickup by ID
+GET {{baseUrl}}/pickups/1
+Authorization: Bearer {{citizenToken}}
+
+### Update pickup status
+PATCH {{baseUrl}}/pickups/1
+Authorization: Bearer {{citizenToken}}
+Content-Type: application/json
+
+{
+  "status": "completed"
+}
+
+### Get all pickups (Admin)
+GET {{baseUrl}}/pickups/admin/all
+Authorization: Bearer {{adminToken}}
+
+
+###==========================
+### 5. ADMIN ENDPOINTS (Admin only)
+###==========================
+
+### Get dashboard stats
+GET {{baseUrl}}/admin/stats
+Authorization: Bearer {{adminToken}}
+
+### Get all users
+GET {{baseUrl}}/admin/users
+Authorization: Bearer {{adminToken}}
+
+### Get all pickups
+GET {{baseUrl}}/admin/pickups
+Authorization: Bearer {{adminToken}}
+
+### Assign collector to pickup
+POST {{baseUrl}}/admin/pickups/1/assign
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "collectorId": 2
+}
+
+### Create route batch
+POST {{baseUrl}}/admin/route-batch
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "pickupIds": [1, 2, 3],
+  "collectorId": 2,
+  "scheduledDate": "2026-05-28"
+}
+
+
+###==========================
+### 6. LEDGER ENDPOINTS (Protected)
+###==========================
+
+### Get user's ledger entries
+GET {{baseUrl}}/ledger
+Authorization: Bearer {{citizenToken}}
+
+### Get ledger by ID
+GET {{baseUrl}}/ledger/1
+Authorization: Bearer {{citizenToken}}
+
+
+###==========================
+### 7. MARKET ENDPOINTS
+###==========================
+
+### Get available rewards
+GET {{baseUrl}}/market/rewards
+
+### Get user's points balance
+GET {{baseUrl}}/market/points/balance
+Authorization: Bearer {{citizenToken}}
+
+
+###==========================
+### 8. PRICING ENDPOINTS
+###==========================
+
+### Get unit prices
+GET {{baseUrl}}/pricing/units
+
+### Get user's point history
+GET {{baseUrl}}/pricing/points-history
+Authorization: Bearer {{citizenToken}}
+
+
+###==========================
+### 9. STATS ENDPOINTS (Protected)
+###==========================
+
+### Get user statistics
+GET {{baseUrl}}/stats
+Authorization: Bearer {{citizenToken}}
+
+### Get system statistics (Admin)
+GET {{baseUrl}}/stats/system
+Authorization: Bearer {{adminToken}}
+
+
+###==========================
+### 10. AI ENDPOINTS
+###==========================
+
+### Verify pickup image
+POST {{baseUrl}}/ai/verify-image
+Authorization: Bearer {{citizenToken}}
+Content-Type: application/json
+
+{
+  "pickupId": 1,
+  "imageUrl": "https://example.com/image.jpg"
+}
+
+### Get AI verification logs
+GET {{baseUrl}}/ai/verification-logs/1
+Authorization: Bearer {{citizenToken}}
+
+
+###==========================
+### 11. LEADERBOARD ENDPOINTS
+###==========================
+
+### Get top contributors
+GET {{baseUrl}}/leaderboard/top-contributors
+
+### Get leaderboard by period
+GET {{baseUrl}}/leaderboard/monthly
+
+### Get user ranking
+GET {{baseUrl}}/leaderboard/rank
+Authorization: Bearer {{citizenToken}}
+
+
+###==========================
+### 12. TIPS ENDPOINTS
+###==========================
+
+### Get all tips
+GET {{baseUrl}}/tips
+
+### Get tip by ID
+GET {{baseUrl}}/tips/1
+
+### Create tip (Admin)
+POST {{baseUrl}}/tips
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "Recycling Tip",
+  "content": "Always rinse containers before recycling",
+  "category": "recycling"
+}
+
+
+###==========================
+### HELPFUL COMMANDS
+###==========================
+
+### After running Register, copy the token from response and paste here
+### @citizenToken = paste_token_here
+
+### To test with curl:
+# curl -X POST http://localhost:4000/api/v1/auth/register \
+#   -H "Content-Type: application/json" \
+#   -d '{"name":"Test User","email":"test@example.com","password":"password123"}'
+
+### Check if server is running:
+# curl http://localhost:4000/api/v1/health

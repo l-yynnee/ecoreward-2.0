@@ -64,7 +64,17 @@ app.use(
   })
 );
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+
+// Debug middleware to log all requests
+app.use((req, res, next) => {
+  if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') {
+    console.log(`[${req.method}] ${req.path}`);
+    console.log('Headers:', req.headers);
+    console.log('Body:', req.body);
+  }
+  next();
+});
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes

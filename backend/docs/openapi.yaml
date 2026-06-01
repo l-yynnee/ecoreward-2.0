@@ -1,0 +1,43 @@
+openapi: 3.0.0
+info:
+  title: EcoReward Waste Management System API
+  description: API documentation for EcoReward waste management and reward system
+  version: 1.0.0
+  contact:
+    name: EcoReward Support
+    email: support@ecoreward.com
+
+servers:
+  - url: http://localhost:3001
+    description: Development server
+  - url: https://api.ecoreward.com
+    description: Production server
+
+paths:
+  /api/health:
+    get:
+      summary: Health Check
+      description: Returns the health status of the API
+      responses:
+        '200':
+          description: API is running
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: OK
+
+tags:
+  - name: Auth
+    description: Authentication endpoints
+  - name: Users
+    description: User management endpoints
+  - name: Pickups
+    description: Waste pickup endpoints
+  - name: Leaderboard
+    description: Leaderboard endpoints
+  - name: Admin
+    description: Admin endpoints

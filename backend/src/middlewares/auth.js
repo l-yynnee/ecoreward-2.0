@@ -2,16 +2,25 @@ const jwt = require("jsonwebtoken");
 
 module.exports = function auth(req, res, next) {
   const header = req.headers.authorization || "";
+  console.log('[AUTH] Authorization header:', header);
+  console.log('[AUTH] JWT_SECRET:', process.env.JWT_SECRET);
+  
   const token = header.startsWith("Bearer ") ? header.slice(7) : null;
 
-  if (!token) return res.status(401).json({ message: "Missing token" });
+  if (!token) {
+    console.log('[AUTH] Missing token');
+    return res.status(401).json({ message: "Missing token" });
+  }
 
   try {
+    console.log('[AUTH] Verifying token...');
     const payload = jwt.verify(token, process.env.JWT_SECRET);
+    console.log('[AUTH] Token verified, user:', payload);
     req.user = payload; // { id, role, iat, exp }
     next();
   } catch (err) {
-    return res.status(401).json({ message: "Invalid token" });
+    console.log('[AUTH] Token verification failed:', err.message);
+    return res.status(401).json({ message: "Invalid token", error: err.message });
   }
 };
 //$ADMIN_TOKEN
